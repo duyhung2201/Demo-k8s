@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-org4-peer0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: example-org4-peer0
+  template:
+    metadata:
+      labels:
+        name: example-org4-peer0
+    spec:
+      volumes:
+        - name: fabric-example-files
+          persistentVolumeClaim:
+            claimName: fabric-example-pvc
+        - name: example-org4-peer0-files
+          persistentVolumeClaim:
+            claimName: example-org4-peer0-pvc
+        - name: dockersocket
+          hostPath:
+            path: /var/run/docker.sock
+
+      containers:
+        - name: peer
+          image: hyperledger/fabric-peer:1.4.4
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c', 'peer node start']
+          env:
+            - name: TZ
+              value: 'America/Sao_Paulo'
+            - name: CORE_PEER_ADDRESSAUTODETECT
+              value: 'true'
+            - name: CORE_PEER_NETWORKID
+              value: nid1
+            - name: CORE_PEER_ID
+              value: example-org4-peer0
+            - name: CORE_PEER_ADDRESS
+              value: example-org4-peer0:30410
+            - name: CORE_PEER_LISTENADDRESS
+              value: 0.0.0.0:30410
+            - name: CORE_PEER_EVENTS_ADDRESS
+              value: 0.0.0.0:30411
+            - name: CORE_PEER_GOSSIP_BOOTSTRAP
+              value: example-org4-peer0:30410
+            - name: CORE_PEER_GOSSIP_ENDPOINT
+              value: example-org4-peer0:30410
+            - name: CORE_PEER_GOSSIP_EXTERNALENDPOINT
+              value: example-org4-peer0:30410
+            - name: CORE_PEER_GOSSIP_ORGLEADER
+              value: 'false'
+            - name: CORE_PEER_GOSSIP_SKIPHANDSHAKE
+              value: 'true'
+            - name: CORE_PEER_GOSSIP_USELEADERELECTION
+              value: 'true'
+            - name: CORE_PEER_COMMITTER_ENABLED
+              value: 'true'
+            - name: CORE_PEER_PROFILE_ENABLED
+              value: 'true'
+            - name: CORE_VM_ENDPOINT
+              value: unix:///host/var/run/docker.sock
+            - name: CORE_PEER_LOCALMSPID
+              value: Org4MSP
+            - name: CORE_PEER_MSPCONFIGPATH
+              value: /fabric/crypto-config/peerOrganizations/org4.example.com/peers/peer0.org4.example.com/msp
+            - name: CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN
+              value: 'pbft'
+            - name: CORE_PBFT_GENERAL_MODE
+              value: 'classic'
+            - name: CORE_PBFT_GENERAL_N
+              value: '4'
+            - name: FABRIC_LOGGING_SPEC
+              value: debug
+            - name: CORE_LOGGING_PEER
+              value: debug
+            - name: CORE_LOGGING_CAUTHDSL
+              value: debug
+            - name: CORE_LOGGING_GOSSIP
+              value: debug
+            - name: CORE_LOGGING_LEDGER
+              value: debug
+            - name: CORE_LOGGING_MSP
+              value: info
+            - name: CORE_LOGGING_POLICIES
+              value: debug
+            - name: CORE_LOGGING_GRPC
+              value: debug
+            - name: CORE_PEER_TLS_ENABLED
+              value: 'false'
+            - name: FABRIC_CFG_PATH
+              value: /etc/hyperledger/fabric
+            - name: ORDERER_URL
+              value: example-orderer:31010
+            - name: GODEBUG
+              value: 'netdns=go'
+            - name: CORE_VM_DOCKER_ATTACHSTDOUT
+              value: 'true'
+          volumeMounts:
+            - mountPath: /fabric
+              name: fabric-example-files
+            - mountPath: /var
+              name: example-org4-peer0-files
+            - mountPath: /host/var/run/docker.sock
+              name: dockersocket

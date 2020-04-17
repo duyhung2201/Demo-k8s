@@ -1,0 +1,67 @@
+{
+  "name": "network-org1",
+  "version": "1.0.0",
+  "client": {
+    "organization": "Org1",
+    "connection": {
+      "timeout": {
+        "peer": {
+          "endorser": "300"
+        }
+      }
+    }
+  },
+  "channels": {
+    "examplechannel": {
+      "orderers": ["example-orderer"],
+      "peers": {
+        "example-org1-peer0": {}      
+      }
+    }
+  },
+  "organizations": {
+    "Org1": {
+      "mspid": "Org1MSP",
+      "peers": [
+        "example-org1-peer0"      
+			],
+      "certificateAuthorities": ["example-org1-ca"]
+    }
+  },
+  "peers": {
+    "example-org1-peer0": {
+      "url": "grpc://192.168.99.100:30110",
+      "tlsCACerts": {
+        "pem": "${PEERPEM}"
+      },
+      "grpcOptions": {
+        "ssl-target-name-override": "192.168.99.100",
+        "hostnameOverride": "192.168.99.100"
+      }
+    } 
+  },
+  "orderers": {
+    "certificate-orderer": {
+      "url": "grpc://192.168.99.100:31010"
+    },
+    "tlsCACerts": {
+      "pem": "${OPEM}"
+    },
+    "grpcOptions": {
+      "ssl-target-name-override": "192.168.99.100",
+      "hostnameOverride": "192.168.99.100"
+    }
+  },
+  "certificateAuthorities": {
+    "example-org1-ca": {
+      "url": "http://192.168.99.100:30054",
+      "caName": "ca.org1.example.com",
+      "tlsCACerts": {
+        "pem": "${CAPEM}"
+      },
+      "httpOptions": {
+        "verify": false
+      }
+    }
+  }
+}

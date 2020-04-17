@@ -1,0 +1,18 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: example-orderer-pv
+  labels:
+    type: local
+    name: example-orderer-files
+spec:
+  capacity:
+    storage: 2Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /nfs/example-orderer/var
+    server: storage.local.parisi.biz
+    readOnly: false

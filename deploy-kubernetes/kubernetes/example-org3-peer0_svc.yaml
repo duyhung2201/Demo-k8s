@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-org3-peer0
+  labels:
+    run: example-org3-peer0
+spec:
+  type: NodePort
+  selector:
+    name: example-org3-peer0
+  ports:
+    - protocol: TCP
+      nodePort: 30310
+      targetPort: 30310
+      port: 30310
+      name: grpc
+    - protocol: TCP
+      nodePort: 30311
+      targetPort: 30311
+      port: 30311
+      name: events
